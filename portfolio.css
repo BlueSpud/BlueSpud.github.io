@@ -1,0 +1,178 @@
+.content {
+    
+    width: 100%;
+    background-color: white;
+    
+    text-align: center;
+    
+}
+
+.content p {
+    
+    text-align: left;
+    padding-left: 10pt;
+    padding-right: 10pt;
+    
+    font-weight: 200;
+    font-size: 15pt;
+    
+}
+
+.title_container {
+    
+    display: inline-block;
+    border-radius: 7.5pt;
+    
+    background-image: linear-gradient(to right, #2BD563 , #0082D5);
+    padding: 5pt;
+    margin-bottom: 20pt;
+    
+}
+
+.title {
+    
+    background: white;
+    
+    border-radius: 4pt;
+    padding: 25px;
+    padding-left: 50pt;
+    padding-right: 50pt;
+    
+    font-size: 22pt;
+    font-weight: 500;
+    text-transform: uppercase;
+    
+    color: #4a4a4a;
+    
+}
+
+.carousel {
+    
+    position: absolute;
+    
+    width: 100%;
+    height: 100%;
+    
+    overflow-x: hidden;
+    
+}
+
+#carousel_content {
+    
+    width: 100%;
+    height: 100%;
+    
+    background-color: #D73131;
+    
+    transform: translate3d(0.0, 0.0, 0.0);
+    transition: transform 0.3s, background-color 0.3s;
+    
+}
+
+.carousel_node {
+    
+    width: 100%;
+    height: 100%;
+    
+    background-size: contain;
+    display: inline-block;
+    
+    cursor: pointer;
+    
+}
+
+@media
+only screen and (max-width: 815pt) {
+    
+    .carousel_node {
+        
+        padding-top: 70pt;
+        
+    }
+    
+}
+
+.tab_collection {
+    
+    position: absolute;
+    width: 35%;
+    
+    left: 32.5%;
+    bottom: 20pt;
+    
+    
+    z-index: 5;
+    
+}
+
+.tab_collection tr {
+    
+    position: relative;
+    left: -50%;
+    
+}
+
+.tab {
+    
+    border-radius: 50%;
+    width: 15pt;
+    height: 15pt;
+    
+    background-color: white;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+    
+    cursor: pointer;
+    
+}
+
+#forward_button {
+    
+    width: 30pt;
+    height: 30pt;
+    
+    position: absolute;
+    top: 50%;
+    right: 10pt;
+    
+    background-image: url(assets/forward_button.svg);
+    
+}
+
+#back_button {
+    
+    width: 30pt;
+    height: 30pt;
+    
+    position: absolute;
+    top: 50%;
+    left: 20pt;
+    
+    background-image: url(assets/back_button.svg);
+    
+}
+
+#click_more {
+    
+    color: white;
+    font-size: 24pt;
+    font-weight: 200;
+    text-align: center;
+    
+    position: absolute;
+    width: 100%;
+    
+    left: 0pt;
+    bottom: 60pt;
+    
+    z-index: 5;
+    
+    
+}
+
+.tab:hover {
+    
+    opacity: 1.0;
+    
+}
+

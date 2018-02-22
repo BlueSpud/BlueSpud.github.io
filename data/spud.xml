@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blog>
+    
+    <entry>
+    
+        <title>Physically Based Shading</title>
+        
+        <preview>For the first couple of weeks I've focused on the core components of the engine such as file loading and basic rendering. A lot of this still isn't done and I'll add features as I need them, but the engine is at a point where I can load a model in, texture it and rendering it using a shader</preview>
+        
+        <content>For the first couple of weeks I've focused on the core components of the engine such as file loading and basic rendering. A lot of this still isn't done and I'll add features as I need them, but the engine is at a point where I can load a model in, texture it and rendering it using a shader. I’ve also implemented physically based shading. Physically based shading is a technique used to light a scene more or less how it would be lit in real life. Obviously this can get very expensive because light is so complex, so in realtime rendering we use approximations for how light would behave. This is a set of a few equations that given certain properties of the surface, realistically calculate the lighting of an object. The three objects above are rendered with the same shader, even though they have fairly different surfaces. This can be done because the equations take in their different physical properties and calculates results that we would expect to see in the real world. Whats really cool is that these can be specified in a texture map, so we can have very different looking parts of an object without having to change shaders or add an additional draw call. The barrel in the picture above is done like this, the top is very reflective and metallic while the body below is matte. \n
+
+        The benefits of using PBR is that artists (or me in this case) can use the same workflow across multiple engines and it will more or less look the same across all of them, not to mention it also looks very good when properly implemented. Work still needs to be done on my implementation (optimization, math tweaks, realtime reflections, etc.) but currently it works well enough that I can move onto other things.</content>
+        <date>September 14, 2016</date>
+        
+        <image>assets/image/spud_blog/physically_based_rendering.jpg</image>
+        <video>https://www.dropbox.com/s/mzch38c1hweawg0/UI%3ASound.mp4?dl=1</video>
+    
+    </entry>
+    
+    <entry>
+    
+        <title>Deferred Shading</title>
+        
+        <preview>This week I worked on implementing deferred shading. In computer graphics, when we render an object for every pixel that it takes up on the screen we run a mini-program called a shader. This is where real-time lighting is done, but when we want to have an object lit by multiple lights we run into a bit of a problem</preview>
+        
+        <content> This week I worked on implementing deferred shading. In computer graphics, when we render an object for every pixel that it takes up on the screen we run a mini-program called a shader. This is where real-time lighting is done, but when we want to have an object lit by multiple lights we run into a bit of a problem. For every light we want to add to the scene, we have to render the scene one more time, and that gets very expensive, very quickly. The solution is deferred shading. \n
+
+        In deferred shading we “defer” the shading until later. First we render the scene once and take in some information about it. In my case I render depth, albedo, normal, roughness and metallic to a texture; position can be reconstructed from the depth. Once the entire scene is rendered lighting can be done in another 2D pass. Lighting is now decoupled from scene complexity because the information needed from the scene is already in the offscreen buffer (called the G-Buffer). Because its decoupled from the scene geometry it would take the same computations to render a cube or a million triangle scene. This is really great because it enables rendering hundreds or thousands of lights (so long as its optimized), but it can also make transparent objects really difficult to render, so I’ll have to tackle that in the future. \n
+
+        I also implemented something called normal mapping into the engine. If we want to add complexity to an object’s surface, more polygons can be added, but that gets expensive if we want lots of tiny little details. That’s where normal mapping comes in. A normal is a vector that is perpendicular to a surface and we use it to compute lighting. A normal map is a texture that contains a bunch of normals. By using the normal map normals instead of the ones that a model has (which are only per-vertex) we can add a whole bunch of tiny little detail without increasing the number of polygons we have to render. If you look at the floor in the picture above, you’ll notice that there are a whole bunch of bumps and gaps in between the tiles. In fact the floor is completely flat, but the lighting makes it appear bumpy because of the normal map. \n
+
+        These are some great additions to the engine and really contribute to the quality of the scene. If you look closely at the picture above, something is a little off, and that’s because there are no shadows. In computer graphics we don’t magically get shadows, and so we have to simulate those too, which is probably my next step.</content>
+        <date>September 23, 2016</date>
+        
+        <image>assets/image/spud_blog/deferred_shading.jpg</image>
+    
+    </entry>
+    
+    <entry>
+    
+        <title>Shadow Mapping</title>
+        
+        <preview>I’ve spent the last couple of weeks working on shadows and tightening up parts of the engine. For shadows I’ve chosen to use shadow mapping because of their versatility and speed. Shadow mapping is a technique where the scene is rendered from the light’s perspective as a depth map</preview>
+        
+        <content>I’ve spent the last couple of weeks working on shadows and tightening up parts of the engine. For shadows I’ve chosen to use shadow mapping because of their versatility and speed. Shadow mapping is a technique where the scene is rendered from the light’s perspective as a depth map. Then when we light the scene from the normal camera we project every point on the screen into light space and compare it with the depth map rendered from the light’s perspective. If the value from the depth map is closer to the light’s camera than the one that was projected, the projected fragment is in shadow. \n
+
+        I’ve also chosen to use a shadow map atlas. This is just a 8192 x 8192 framebuffer divided into 512 x 512 chunks that are assigned to lights that cast shadows. That way just one texture needs to be bound to render all the lights in the scene. I’ve thrown around the idea of using 2 shadow maps for each light, one for dynamic geometry and one for static geometry. That way I can render a shadow map for dynamic objects once per frame and not have to render the entire scene, so hopefully it would be significantly faster. However it does require twice the memory for each light. Right now I am only using a few lights and no dynamic objects, so this isn’t an issue now but I might address it in the future. \n
+
+        Shadow mapping actually can suffer from a lot of artifacts, and there are a few that I still need to clean up. If you look at the image, you can see that the shadows are pixelated. This is because the shadow maps have a finite resolution. We can do a few things to clean up the shadow edges. We can render the shadow maps at a higher resolution, but that takes more memory and is more expensive than a lower resolution. We also can use something called percentage closer filtering (PCF) which samples a shadow map multiple times in different places and averages the values to smooth out the edges of the shadow. We can also use exponential shadow maps which actually let us filter the shadow maps so some kind of blur can be applied to the entire map to smooth out the shadows. This is the solution that I’m leaning towards because once a shadow is filtered it does not need to be filtered again until the shadow map is re-rendered whereas PCF has to be done every frame, for ever shadow casting, light regardless of if it was rendered that frame or not. </content>
+        <date>October 10, 2016</date>
+        
+        <image>assets/image/spud_blog/shadow_mapping.jpg</image>
+    
+    </entry>
+
+</blog>

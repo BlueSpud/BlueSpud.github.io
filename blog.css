@@ -1,0 +1,95 @@
+.logan_blurb {
+    
+    
+    margin: auto;
+    width: 98%;
+    background-color: white;
+    
+    font-size: 16pt;
+    font-weight: 300;
+    text-align: center;
+    overflow: hidden;
+    
+    padding-bottom: 15pt;
+    
+    box-shadow: 0 8px 6px -6px black;
+    
+    margin-bottom: 20pt;
+    
+}
+
+.logan_blurb p {
+    
+    font-size: 13pt;
+    text-align: left;
+    text-indent: 20pt;
+    padding: 10pt;
+    
+}
+
+.logan_blurb_header {
+    
+    background: linear-gradient(to right, #2BD563 , #0082D5);
+    
+    margin: auto;
+    
+    color: white;
+    font-size: 24pt;
+    font-weight: 300;
+    text-transform: uppercase;
+    
+    padding-top: 20pt;
+    padding-bottom: 20pt;
+    
+    white-space: pre-wrap;
+    
+}
+
+.logan_blurb a {
+    
+    display: inline-block;
+    width: 75%;
+    
+    border-radius: 7.5pt;
+    border: 2pt solid #C9D3DF;
+    
+    color: #a7b1bc;
+    text-decoration: none;
+    
+    font-size: 14pt;
+    font-weight: 500;
+    text-transform: uppercase;
+    
+    padding: 15pt;
+    
+    transition: color 0.3s, background-color 0.3s;
+    
+}
+
+.date {
+    
+    margin: 9pt;
+    margin-top: 35pt;
+    margin-bottom: -10pt;
+    
+    text-align: left;
+    color: #a7b1bc;
+    
+    
+}
+
+.logan_blurb a:hover {
+    
+    color: white;
+    background-color: #C9D3DF;
+    
+}
+
+.image_border {
+    
+    margin-top: 20pt;
+    
+    background: linear-gradient(to right, #2BD563 , #0082D5);
+    padding: 15pt;
+    
+}

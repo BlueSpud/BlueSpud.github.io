@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale:1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Home</title>
+</head> 
+
+<link rel="stylesheet" href="shared.css"> 
+<link rel="stylesheet" href="index.css"> 
+
+<body>
+
+    <div class="logan_header" style="box-shadow: 0 8px 6px -6px #222; position:relative; z-index:10;">
+        <div class="logan_header_title"> Logan Pazol </div>
+        <div class="logan_header_subtitle"> student — programmer — gamer </div>
+        
+        <table>
+            <tr>
+                
+                <th><a href="portfolio.html">Portfolio<div class="underline"></div></a></th>
+                <th><a href="resume.html">Resume<div class="underline"></div></a></th>
+                <th><a href="spud.html?spud">Spud Engine 2<div class="underline"></div></a></th>
+                <th><a href="stem.html?stem">STEM Reflections<div class="underline"></div></a></th>
+        
+            </tr>
+        </table>
+        
+        <br>
+        
+    </div>
+    
+    <div class="logan_row" style="z-index:9;" onclick="student()"><div class="logan_row_overlay">
+    
+        <div class="logan_row_information">
+            <div class="logan_row_information_title">
+                Student 
+            </div>
+            <br>
+            I'm a student who's passionate about STEM
+        </div>
+        
+    </div></div>
+    
+    <div class="logan_row" style="z-index:8; background-image: url(assets/image/homepage/programming.jpg);" onclick="programmer()"><div class="logan_row_overlay" style="background-image: linear-gradient(to right, #A133D5 , #D73F59); ">
+        
+        <div class="logan_row_information">
+            <div class="logan_row_information_title">
+                Programmer 
+            </div>
+            <br>
+            I've been programming since I was 12 and want to make it a career
+        </div>
+        
+    </div></div>
+    
+    <div class="logan_row" style="z-index:7; background-image: url(assets/image/homepage/sponza.jpg);" onclick="gamer()"><div class="logan_row_overlay" style="background-image: linear-gradient(to right, #0081D5 , #A133D5); ">
+        
+        <div class="logan_row_information">
+            <div class="logan_row_information_title">
+                Gamer 
+            </div>
+            <br>
+            I love making games just as much as playing them 
+        </div>
+        
+    </div></div>
+    
+    <script src="script/index.js"></script>
+              
+</body>

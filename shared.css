@@ -1,0 +1,136 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto:100,300,400,500';
+
+html {
+    
+    font-family: 'Roboto', sans-serif;
+    background-color: hsl(70, 8%, 15%);
+}
+
+body {
+    
+    margin: auto;
+}
+
+.topbar {
+    
+    position: absolute;
+    z-index: 100;
+    
+}
+
+.logan_header {
+    
+    background: linear-gradient(to right, #2BD563 , #0082D5);
+    
+    width: 100%;
+    
+    color: white;
+    font-weight: 100;
+    text-align: center;
+    
+    box-shadow: 0 8px 6px -6px #222;
+    
+}
+
+.logan_header_orange {
+    
+    background: linear-gradient(to right, #CA3058 , #FF9948);
+    
+}
+
+.logan_header_title {
+    
+    font-size: 72pt;
+    padding-top: 50pt;
+    padding-bottom: 10pt;
+    
+}
+
+.logan_header_subtitle {
+    
+    font-size: 20pt;
+    padding-bottom: 100pt;
+    
+}
+
+.logan_header table {
+    
+    color: white;
+    text-align: center;
+    width: 100%;
+    
+    font-size: 18pt;
+}
+
+.logan_header a {
+    
+    text-align: left;
+    display: inline-block;
+    
+    color: white;
+    font-weight: 300;
+    text-decoration: none;
+    
+    text-transform: uppercase;
+    white-space: nowrap;
+    
+    padding: 2pt;
+    padding-top: 6pt;
+    
+    cursor:pointer;
+    
+}
+
+.logan_header_logo {
+    
+    font-size: 20pt;
+    font-weight: 300;
+    
+}
+
+.logan_header a .underline {
+    
+    width: 0%;
+    transition: width 0.3s;
+    
+    margin-top: 2pt;
+    height: 2pt;
+    
+    background-color: white;
+    
+}
+
+.logan_header a:hover .underline {
+    
+    width: 100%;
+    
+}
+
+.topbar_spacing {
+    
+    width: 100%;
+    height: 45pt;
+    
+}
+
+@media
+only screen and (max-width: 760px) {
+        
+    .logan_header_subtitle {
+        
+        padding-bottom: 20pt;
+        
+    }
+    
+    .logan_header table, .logan_header thead, .logan_header tbody, .logan_header th, .logan_header td, .logan_header tr {
+        
+        display: block;
+    }
+    
+    .topbar_spacing {
+        
+        height: 175pt;
+        
+    }
+        
+}
