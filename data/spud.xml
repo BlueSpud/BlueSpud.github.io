@@ -73,7 +73,7 @@ To load an animated mesh into the engine, first I export a colada. That is then 
 The skinning didn't really require very much code change in the engine itself, other than a very slight modification to the model class and the addition of the new classes to support skinning. I also implemented a new shader system. In the new system, a vertex and fragment shader are written by a programmer like normal. Then when the engine loads them, it compiles several different versions of them by inserting code into them and then saves them to disk so when the engine is in a release configuration it will only have to compile each version if they are missing. Currently this system only compiles a normal shader for static meshes and a skinned shader for skinned meshes. </content>
         <date>February 9, 2017</date>
 
-        <video>https://www.dropbox.com/s/yncxc2r6mw1g62t/Animation.mp4?dl=1</video>
+        <video>assets/video/Animation.mp4</video>
 
     </entry>
 
@@ -115,7 +115,7 @@ The skinning didn't really require very much code change in the engine itself, o
             The Physics system is far from done and I still need to implement kinematic bodies because there are still some artifacts when static rigid bodies move, but kinematics should solve that. The render engine still has a long way to go, so the next few weeks are going to be committed to working on it.</content>
         <date>December 26, 2016</date>
 
-        <video>https://www.dropbox.com/s/2wutp6bpxysfu8z/Physics.mp4?dl=1</video>
+        <video>assets/video/Physics.mp4</video>
 
     </entry>
 
@@ -137,7 +137,7 @@ The skinning didn't really require very much code change in the engine itself, o
     My next step is going to be implementing physics, which will be handled by Bullet, and a global profiler so I can start to get a picture of what is taking up frame time to hopefully make some optimizations before I start adding more post-processing effects and the like. </content>
       <date>December 13, 2016</date>
 
-    <video>https://www.dropbox.com/s/llquvv74974q0wf/UI_Sound.mp4?dl=1</video>
+    <video>assets/video/UI_Sound.mp4</video>
 
     </entry>
 
