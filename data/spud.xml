@@ -1,56 +1,251 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blog>
-    
+
+            <entry>
+
+        <title>Octrees, Levels and IBL</title>
+
+        <preview>I’ve spent the last few weeks on a few different bits and pieces. Quite a few little things have been fixed and or refactored, but the biggest changes that I’ve made are octrees, levels and image based lighting</preview>
+
+        <content>I’ve spent the last few weeks on a few different bits and pieces. Quite a few little things have been fixed and or refactored, but the biggest changes that I’ve made are octrees, levels and image based lighting. \n
+
+Octrees are a spacial partitioning tree. What this means is that a tree for the scene is built based on the objects’ positions. At the top level of the tree is a large cube (about 16km long in the Spud Engine). If an object is smaller than this, which is very likely, the cube is divided into 8 children cubes. If the object is smaller than one of the children cubes the child cube is subdivided into 8 children and so on. This repeats until an object no longer fits inside one of the children. There are some great benefits to using octrees. Imagine that the camera is at the world origin facing the positive z direction and that there are a million objects behind the camera. It would be expensive to frustum cull every single object, however since they are in an octree we can frustum cull the 4 large child nodes behind the player. Since they will not be visible, we know that all the objects contained in them are invisible. Essentially we reduced a million potential frustum tests to four. This is an ideal situation, but it helps to illustrate how great octrees can be. \n
+
+The second major change that I made was adding in levels to the engine. A level is currently just a container for a scene graph, but they are loaded from a file, which is my own binary format. This required some new infrastructure in the engine including serialization for objects, which is a fancy way of saying saving an objects data in a specific way so an identical copy can be created later. I also worked on changing the resource system to use smart pointers so when there is nothing using a resource it is unloaded. This is only really done after a level is loaded and the old level is unloaded (which is done automatically) so resources that are shared between levels don't have to be reloaded. All of this can be done in a separate thread so levels can potentially be streamed or a new one can be loaded in the background when the player is still in a level. \n
+
+The last major change I made was to the PBR system. Before this update I was approximating proper reflections and ambient light in a non-realistic way. To properly implement indirect ambient light and reflections I am now using image based lighting (IBL). There are two parts to IBL, a diffuse and a specular component. The diffuse term comes from a blurred version of the environment map. The specular term is a bit more complex and actually requires a precomputed BDRF because its so expensive and can’t be done in real time. Swapping these out for my approximations has vastly improved the quality of the rendering as can be seen in the image. I also spent some time redoing the material test model to look a little bit better. Now that image based lighting is in the engine I need to work on getting the environment maps to actually be correct for the scene. I’ve already implemented rendering the scene to a cube map, but I’m not quite happy with how the code is structured or how it looks when used as the environment map so theres still quite a bit of work to be done.</content>
+        <date>April 5, 2017</date>
+
+        <image>assets/image/spud_blog/ibl.jpg</image>
+
+    </entry>
+
+        <entry>
+
+        <title>New Character Controller and Frustum Culling</title>
+
+        <preview>I’ve been working on lots of little things over the past few weeks. The biggest addition is the revamped character controller, which was a pain to implement due to me not understanding a part of the PhysX documentation</preview>
+
+        <content>I’ve been working on lots of little things over the past few weeks. The biggest addition is the revamped character controller, which was a pain to implement due to me not understanding a part of the PhysX documentation. \n
+
+I realized I don't really have any decent assets to show off the engine’s rendering capabilities, so I spent a little while creating a decent wall and floor texture this weekend, which are what you can see in the picture. Im not an artist by any means, but hopefully they show how the engine’s quality has improved significantly since the fall. \n
+
+PhysX comes packaged with a character controller, and it works well, but it also comes with a few issues. There are two supported collision shapes for the controller, a capsule (shaped like a pill) and a box. The capsule is a much better choice for a character, however there is a problem with it. When walking off of a cliff, due to the rounded bottom of the capsule, the character will slide downwards before actually going into free-fall. To me this looks unnatural, so I implemented an entirely new character controller. It uses sweep scene queries to allow for any convex mesh to be used as a character controller. There are still some quirks with the new controller like gravity’s magnitude being taken into account when performing a sliding collision response, but I have some ideas on how to fix them. \n
+
+There were some other small changes I made around the engine. For instance one of the changes was to make it so when the window does not have focus, the engine doesn’t render. Typically games render at a lower framerate in the background, but I have chosen to not have it render at all for maximum system performance. I’ve had issues with other GPU intensive applications being slow when the engine was running for a long time. Considering that the engine can hotload assets which export from GPU intensive programs, this tiny change should make a huge difference in development. \n
+
+I played a bit with the lighting as well. I made some adjustments to the attenuation for spot and point lights that makes them more realistic and more predictable. I now use the attenuation equation that Epic uses in Unreal 4, taken from their paper on realistic lighting. I made some improvements to the light tile pass and fixed a bunch of artifacts. I added a few features for spot lights as well, which now have a soft edge falloff and can have shadows. \n
+
+A feature that I’ve been wanting to implement for a while also made it into this version of the engine. Its called frustum culling, and it is one of the optimizations I’ve planned to make in the rendering engine. Frustum culling is a relatively simple algorithm that makes it so that only the geometry that is visible is actually rendered. There is no noticeable difference, but it cuts down on precious draw calls. I also put in frustum culling for lights as well so only visible lights are given a shadow map update and are sent to the GPU for rendering. \n</content>
+        <date>March 12, 2017</date>
+
+        <image>assets/image/spud_blog/frustum_culling.jpg</image>
+
+    </entry>
+
     <entry>
-    
+
+        <title>Variance Shadow Mapping And Tile-Based Shading</title>
+
+        <preview>Pixelated shadows have been in the engine ever since they were originally implemented,  and I’ve finally implemented a way to make them smoother. I’ve been putting this off for a while because of some of the artifacts that the new method introduces, but I think that I’ve gotten it to where the quality is acceptable</preview>
+
+        <content>Pixelated shadows have been in the engine ever since they were originally implemented, and I’ve finally implemented a way to make them smoother. I’ve been putting this off for a while because of some of the artifacts that the new method introduces, but I think that I’ve gotten it to where the quality is acceptable. In the future if I find that this becomes too much of an issue, I can always move to another technique to implement soft shadows. \n
+
+The technique that I’ve implemented to soften the edges of the shadows is called variance shadow mapping. This technique actually tries to predict how shadowed a particular pixel is with some statistics. This has the great side effect of removing shadow acne and peter-panning, which has let me remove the bias I was applying before, improving quality. It also allows regular filtering techniques to be applied. In the Spud Engine I use linear texture filtering as well as a box blur on each shadow. This gives the shadows soft edges which are much more visually pleasing than the jaggy ones. It also reduces the shimmering from the perspective shadow mapping, but does not remove it entirely. \n
+
+I also tried to implement tile-based deferred shading. The goal is to minimize texture samples per pixel by performing lighting for all lights that effect a single pixel at once. If all 50 or 100 lights in a scene were done for each pixel, it would be slow. To combat this, the screen is separated into tiles (I am using 32X32 pixel tiles) and only performs lighting inside each tile for the lights that effect it. My implementation uses a draw call for each tile (which is not a good idea) and the determination of which lights effect each tile also needs some work. It works, but just barely and I’ll need to revisit this soon.</content>
+        <date>February 25, 2017</date>
+
+        <image>assets/image/spud_blog/variance_shadow.jpg</image>
+
+    </entry>
+
+    <entry>
+
+        <title>Skeletal Animation</title>
+
+        <preview>This week I decided to tackle skeletal animation. There isn’t a whole lot to say about it, other than I had to write a lot of code in the model converter, which is now also available on Github</preview>
+
+        <content>This week I decided to tackle skeletal animation. There isn’t a whole lot to say about it, other than I had to write a lot of code in the model converter, which is now also available on Github.
+
+To load an animated mesh into the engine, first I export a colada. That is then loaded into the model converter where the mesh and skinning and animation information are parsed. After all of that data is imported, 3 files are exported. The first is the standard model format (.smdl) which is identical to a static mesh. This way a mesh that was exported from a modeling program as a skinned mesh can also be used as a static mesh in the engine. The second file is the skinning file (.srig). This contains the vertex weights and bone matrices. The third file is an animation file (.sanim). I decoupled this from the rig so that several animations can be used on the same rig without reloading the rig or the model. \n
+
+The skinning didn't really require very much code change in the engine itself, other than a very slight modification to the model class and the addition of the new classes to support skinning. I also implemented a new shader system. In the new system, a vertex and fragment shader are written by a programmer like normal. Then when the engine loads them, it compiles several different versions of them by inserting code into them and then saves them to disk so when the engine is in a release configuration it will only have to compile each version if they are missing. Currently this system only compiles a normal shader for static meshes and a skinned shader for skinned meshes. </content>
+        <date>February 9, 2017</date>
+
+        <video>https://www.dropbox.com/s/yncxc2r6mw1g62t/Animation.mp4?dl=1</video>
+
+    </entry>
+
+     <entry>
+
+        <title>Spud Script and Scalable Ambient Obscurance</title>
+
+        <preview>It has been a while since I’ve really made any progress on the game engine, and thats because I’ve been working on a bit of a side project. I built an interpreter for a language that is almost identical to C during the past month</preview>
+
+        <content>It has been a while since I’ve really made any progress on the game engine, and thats because I’ve been working on a bit of a side project. I built an interpreter for a language that is almost identical to C during the past month. This is my first time doing anything like this, so the code is extremely messy and definitely not efficient, but it works. \n
+
+            The point of building an interpreter from scratch instead of using something else that was already out there (like LuaJit) was to gain the experience as well as make it very easy to interact with C++. I wanted to be able to use an object that was created in the scripting language in C++ and use C++ objects inside of script. I’m almost done with it, but it needs some code-clean up before it can be put into the engine. The whole project, just like the engine is open source and the link to the github repository is on the main Spud Engine page. \n
+
+            Today I went back to the engine development and fixed something that’s been bugging me for a while. The ambient occlusion I had implemented suffered from some weird banding issues, forcing me to use a relatively small radius for it. There were certain places that it didn’t really look right either, and if you look at some of the old screenshots carefully, you can probably notice it. \n
+
+            The engine now uses a different algorithm for ambient occlusion called Scalable Ambient Obscurance (SAO). This algorithm is much cheaper due to the reduced bandwidth, and also allows for much larger radii without a large increase in the number of samples. The algorithm also looks a lot more visually appealing than the last algorithm, which is a huge plus. This isn't a huge change, but I’m glad that I’ve finally made it. \n</content>
+        <date>January 23, 2017</date>
+
+        <image>assets/image/spud_blog/sao.jpg</image>
+
+    </entry>
+
+    <entry>
+
+        <title>Physics</title>
+
+        <preview>I’ve worked for the last couple of weeks on implementing physics into the engine. Currently I only have rigid body physics and a character controller implemented</preview>
+
+        <content>I’ve worked for the last couple of weeks on implementing physics into the engine. Currently I only have rigid body physics and a character controller implemented. I had it working in a day or two using Bullet, which is an open source physics engine, but I ran into some difficulty with the character controller, which is essential to a good gaming experience. \n
+
+            I had quite a few issues with the character controller in Bullet. The first issue that I had was that the player was flying off in the x-direction when the game started. It took me some digging through the code (the documentation has nothing on this) until I realized that the character controller stores its own up vector, meaning that it was applying gravity in the x-direction, rather than the y-direction which it was globally set to. \n
+
+            The second issue arose with the interpolation of the character controller. The Spud Engine uses a fixed time step, which means for a fixed number of times a second (as of writing this it is 20 ticks per second) the game is updated. Then for every frame that is rendered, things are interpolated so we make the speed of the game independent of the frame rate. To make sure that Bullet played nicely with The Spud Engine, I had it using a fixed time step as well, but thats where the second issue with the character controller arose. The character controller in Bullet doesn’t interpolate, which meant that it didn’t work with the fixed time step. I ended up modifying the source so that it was updated every frame instead so other physics could use the fixed time step. I tried switching to a rigid body for the character controller, but there were several artifacts which meant that I couldn't use it either. \n
+
+            After sorting out the essential issues, I ran into a few other problems with it. When pushed by a moving object there would be stutter, when it ran into a small corner it would jitter and when it walked onto the edge of a triangle it would bounce up and down. These artifacts were enough to justify pursuing a better solution for physics. I settled on PhysX, Nvidia’s physics solution. The benefit of using PhysX over bullet is that it has been used in much bigger projects like Unity and Unreal and that if you have an Nvidia GPU made in the last 4 years, it can run on the GPU which can really speed things up. \n
+
+            Implementing PhysX was just as easy as Bullet was, without the added caveats. Although there were some issues with the PhysX character controller as well. The PhysX character controller does not have built in support for smoothly gliding up and down slopes, so when going down a slope it would bounce off. I ended up solving the issue by projecting the velocity of the controller along the normal of the slope which got rid of the bouncing. \n
+
+            The Physics system is far from done and I still need to implement kinematic bodies because there are still some artifacts when static rigid bodies move, but kinematics should solve that. The render engine still has a long way to go, so the next few weeks are going to be committed to working on it.</content>
+        <date>December 26, 2016</date>
+
+        <video>https://www.dropbox.com/s/2wutp6bpxysfu8z/Physics.mp4?dl=1</video>
+
+    </entry>
+
+
+    <entry>
+
+      <title>Lots of Little Things</title>
+
+      <preview>This last month has been a rather uneventful month in terms of features. I implemented the basis of the UI system, the sound system, the finished console and refactored a decent amount of code</preview>
+
+      <content>This last month has been a rather uneventful month in terms of features. I implemented the basis of the UI system, the sound system, the finished console and refactored a decent amount of code
+
+    The biggest change is probably the sound system. Sound emitters can take in one of two modes. One mode is the UI mode, which is used for sound effects that follow the camera such as character voice acting or UI sound effects. The second mode is a positional mode where the sound has a position in the world and will change volume and position when you’re wearing headphones based on the position of the camera relative to it. This is all possible with the OpenAL library which takes in raw audio data and plays it based on the position I give it for the sound effects and the camera’s position and orientation. Currently I’ve only written a loader for .wav, but in the future I might support more file formats. \n
+
+    The second largest feature is the UI system. I’ve adopted Unreal’s concept of widgets, which are independent things that can be added to the screen. Right now I have a button and a text field widget, but the foundation to creating more is laid. When the input mode is switched to the UI, several events are called on widgets when they are pressed, hovered over, typed on and released. Besides dragging, these are all the actions that need to be included to create any widget I might need. \n
+
+    With the addition of text input I was able to finish the console. I’ve implemented a registry of console commands so a command can call any part of code in the engine. Commands are defined by the preceding words and any arguments are passed into the function that it calls. The only command that I currently have is a hello command, but the console will be a vital tool for development in the future. \n
+
+    My next step is going to be implementing physics, which will be handled by Bullet, and a global profiler so I can start to get a picture of what is taking up frame time to hopefully make some optimizations before I start adding more post-processing effects and the like. </content>
+      <date>December 13, 2016</date>
+
+    <video>https://www.dropbox.com/s/llquvv74974q0wf/UI_Sound.mp4?dl=1</video>
+
+    </entry>
+
+    <entry>
+
+        <title>Text Rendering</title>
+
+        <preview>This afternoon was dedicated to text rendering. There isn’t really much to say about it, because text is really just text, no matter how it ends up on the screen</preview>
+
+        <content>This afternoon was dedicated to text rendering. There isn’t really much to say about it, because text is really just text, no matter how it ends up on the screen. Each individual character is on a texture atlas, which means that because we are using bitmaps the text has a finite resolution. I implemented signed distance fields which is a technique that was introduced by Valve. It's a great way to make bitmap text look better with low memory and performance cost and allow for large text to still look good even when the font size is large and the texture map is stretched. \n
+
+            Right now the text rendering I implemented is really inefficient. I render a single quad for each character. This means that for ever character I want to render, I add a draw call. I also compute the texture coordinates inside of the fragment shader so that I don’t need to create a VBO for each character. As of right now there isn’t really an issue with this, but in future I might need to optimize it.\n
+
+            Because I can now render text to the screen I was able to start work on the console. If you are unfamiliar with consoles in game engines, they're a mini command-line prompt where the user can type in commands and get the engine or game to perform certain functions. Its especially useful for developers so that they can avoid recompiling large parts of the engine if they want to debug something. For instance, if I notice a graphical glitch I might have to recompile the engine to enable debug drawing. If I allow debug drawing to be toggled in the console, I can avoid recompiling it. The console is far from done and I still need to implement text boxes, which means that I need to write the foundations of the GUI system.
+            </content>
+        <date>November 15, 2016</date>
+
+        <image>assets/image/spud_blog/text_rendering.png</image>
+
+    </entry>
+
+    <entry>
+
+        <title>New Model Format and Perspective Shadow Mapping</title>
+
+        <preview>The last few weeks have been pretty busy with college applications and lots of hours in World of Warships, so I haven’t had much time to write code outside of class. A lot of what I’ve done is internal, and there isn’t really some fancy graphics feature to show off</preview>
+
+        <content>The last few weeks have been pretty busy with college applications and lots of hours in World of Warships, so I haven’t had much time to write code outside of class. A lot of what I’ve done is internal, and there isn’t really some fancy graphics feature to show off. The two biggest things I implemented were perspective shadow maps and my own custom model format. \n
+
+            Before, when I rendered a directional light the light had a camera that it would render the shadow map from. The problem with this is that directional lights encompass basically the entire scene, shadow map resolution becomes an issue. To solve this directional lights are now using perspective shadow mapping. Instead of rendering the entire scene to the shadow map, now the shadow maps is cropped to right in front of the main camera. This increases the visual quality of the shadows, but also means that the entire scene isn’t shadowed anymore. To solve this, a technique called cascaded shadow mapping can be used which I’m going to implement down the road. \n
+
+            The second big thing that I did was to write my own model format. Previously I was loading in .obj files, which are ascii files that contain vertex, normal, texture coordinate and material data. When I wanted to load in a model to the engine, I also had to create a .mesh file (this was my own format) which specified the material that went onto the object. I had to do this because the .obj that was exported from Blender contained the materials from Blender, not the materials that I could load up from the engine. To fix this I created my own model format and a converter GUI to accompany it. The image is a model I made in about an hour, converted to my model format and assigned multiple different materials to it. \n
+
+            Instead of using ascii, I decided to use binary for increased loading speed and smaller file sizes. The model format is also optimized for loading; it is read and then directly uploaded to OpenGL without any kind of conversion like I had to do when I was using .obj. Another benefit of this was that I could now implement something called indexing which means that instead of rendering a model with 900 vertices to make 300 faces I can render the same model with less vertices because I remove the duplicates. Loading a model this way can actually be a bit tricky and slow, so meshes in my format are already indexed when they are converted, and it actually improves rendering performance. Lastly, I can designate which material goes where and use the materials from the engine. \n
+
+            I also started implementing a component based architecture. Instead of creating a class for a fire hydrant and then having to completely create another class for a fire truck, I can instead create a single actor class and then attach various components to give it various behaviors. If you’ve ever used another game engine you might be familiar with this kind of architecture (Unity and Unreal both use it). Right now I only have a static mesh component, but as I implement more features I’ll also build more components. </content>
+        <date>November 8, 2016</date>
+
+        <image>assets/image/spud_blog/new_model_format.jpg</image>
+
+    </entry>
+
+    <entry>
+
+        <title>Ambient Occlusion</title>
+
+        <preview>For the last few days I’ve been implementing a technique called ambient occlusion into the engine, and I actually managed to crash my computer more times than I’d like to admit with some infinite loops in my shaders</preview>
+
+        <content>For the last few days I’ve been implementing a technique called ambient occlusion into the engine, and I actually managed to crash my computer more times than I’d like to admit with some infinite loops in my shaders. Ambient occlusion is part of global illumination, which is separate from the lighting I’ve already implemented and includes other techniques such as indirect lighting. In simplest terms, ambient occlusion darkens corners in the scene. If you look at a corner or where the wall meets the ceiling in your real-life room, you might notice that these areas are slightly darker, which is what ambient occlusion represents. \n
+
+            There are several ways to do ambient occlusion in real-time rendering, but I’ve opted for SSAO (screen space ambient occlusion). In this technique we look at the depth buffer and sample it multiple times and determine how “occluded” a fragment is by other geometry. This is kind of similar to how shadow mapping works, but is a bit more complex and achieves a different result. This can cause some really nasty artifacts so we introduce randomness into the samples which can get rid of them, but it also generates some high frequency noise which needs to be blurred out. I do the blur at half the resolution of the ambient occlusion texture to improve performance. \n
+
+            SSAO, like most other screen space effects can suffer from pitfalls. Only things that are currently on the screen can actually do any occluding so when the camera moves and new geometry comes into view there can be some noticeable changes in the ambient occlusion. There are some great benefits to it though. It is done in screen space, just like the regular lighting in the scene so it is independent of scene complexity and only dependent on resolution. It only requires normal and depth information (position can be reconstructed from depth), so it works great with the deferred renderer thats already in the engine. This is a great effect and can really make the scene pop with very little effort.</content>
+        <date>October 16, 2016</date>
+
+        <image>assets/image/spud_blog/ambient_occlusion.jpg</image>
+
+    </entry>
+
+    <entry>
+
+        <title>Shadow Mapping</title>
+
+        <preview>I’ve spent the last couple of weeks working on shadows and tightening up parts of the engine. For shadows I’ve chosen to use shadow mapping because of their versatility and speed. Shadow mapping is a technique where the scene is rendered from the light’s perspective as a depth map</preview>
+
+        <content>I’ve spent the last couple of weeks working on shadows and tightening up parts of the engine. For shadows I’ve chosen to use shadow mapping because of their versatility and speed. Shadow mapping is a technique where the scene is rendered from the light’s perspective as a depth map. Then when we light the scene from the normal camera we project every point on the screen into light space and compare it with the depth map rendered from the light’s perspective. If the value from the depth map is closer to the light’s camera than the one that was projected, the projected fragment is in shadow. \n
+
+            I’ve also chosen to use a shadow map atlas. This is just a 8192 x 8192 framebuffer divided into 512 x 512 chunks that are assigned to lights that cast shadows. That way just one texture needs to be bound to render all the lights in the scene. I’ve thrown around the idea of using 2 shadow maps for each light, one for dynamic geometry and one for static geometry. That way I can render a shadow map for dynamic objects once per frame and not have to render the entire scene, so hopefully it would be significantly faster. However it does require twice the memory for each light. Right now I am only using a few lights and no dynamic objects, so this isn’t an issue now but I might address it in the future. \n
+
+            Shadow mapping actually can suffer from a lot of artifacts, and there are a few that I still need to clean up. If you look at the image, you can see that the shadows are pixelated. This is because the shadow maps have a finite resolution. We can do a few things to clean up the shadow edges. We can render the shadow maps at a higher resolution, but that takes more memory and is more expensive than a lower resolution. We also can use something called percentage closer filtering (PCF) which samples a shadow map multiple times in different places and averages the values to smooth out the edges of the shadow. We can also use exponential shadow maps which actually let us filter the shadow maps so some kind of blur can be applied to the entire map to smooth out the shadows. This is the solution that I’m leaning towards because once a shadow is filtered it does not need to be filtered again until the shadow map is re-rendered whereas PCF has to be done every frame, for ever shadow casting, light regardless of if it was rendered that frame or not. </content>
+        <date>October 10, 2016</date>
+
+        <image>assets/image/spud_blog/shadow_mapping.jpg</image>
+
+    </entry>
+
+    <entry>
+
+        <title>Deferred Shading</title>
+
+        <preview>This week I worked on implementing deferred shading. In computer graphics, when we render an object for every pixel that it takes up on the screen we run a mini-program called a shader. This is where real-time lighting is done, but when we want to have an object lit by multiple lights we run into a bit of a problem</preview>
+
+        <content> This week I worked on implementing deferred shading. In computer graphics, when we render an object for every pixel that it takes up on the screen we run a mini-program called a shader. This is where real-time lighting is done, but when we want to have an object lit by multiple lights we run into a bit of a problem. For every light we want to add to the scene, we have to render the scene one more time, and that gets very expensive, very quickly. The solution is deferred shading. \n
+
+            In deferred shading we “defer” the shading until later. First we render the scene once and take in some information about it. In my case I render depth, albedo, normal, roughness and metallic to a texture; position can be reconstructed from the depth. Once the entire scene is rendered lighting can be done in another 2D pass. Lighting is now decoupled from scene complexity because the information needed from the scene is already in the offscreen buffer (called the G-Buffer). Because it is decoupled from the scene geometry it would take the same computations to render a cube or a million triangle scene. This is really great because it enables rendering hundreds or thousands of lights (so long as its optimized), but it can also make transparent objects really difficult to render, so I’ll have to tackle that in the future. \n
+
+            I also implemented something called normal mapping into the engine. If we want to add complexity to an object’s surface, more polygons can be added, but that gets expensive if we want lots of tiny little details. That’s where normal mapping comes in. A normal is a vector that is perpendicular to a surface and we use it to compute lighting. A normal map is a texture that contains a bunch of normals. By using the normal map normals instead of the ones that a model has (which are only per-vertex) we can add a whole bunch of tiny little detail without increasing the number of polygons we have to render. If you look at the floor in the picture above, you’ll notice that there are a whole bunch of bumps and gaps in between the tiles. In fact the floor is completely flat, but the lighting makes it appear bumpy because of the normal map. \n
+
+            These are some great additions to the engine and really contribute to the quality of the scene. If you look closely at the picture above, something is a little off, and that’s because there are no shadows. In computer graphics we don’t magically get shadows, and so we have to simulate those too, which is probably my next step.</content>
+        <date>September 23, 2016</date>
+
+        <image>assets/image/spud_blog/deferred_shading.jpg</image>
+
+    </entry>
+
+    <entry>
+
         <title>Physically Based Shading</title>
-        
+
         <preview>For the first couple of weeks I've focused on the core components of the engine such as file loading and basic rendering. A lot of this still isn't done and I'll add features as I need them, but the engine is at a point where I can load a model in, texture it and rendering it using a shader</preview>
-        
+
         <content>For the first couple of weeks I've focused on the core components of the engine such as file loading and basic rendering. A lot of this still isn't done and I'll add features as I need them, but the engine is at a point where I can load a model in, texture it and rendering it using a shader. I’ve also implemented physically based shading. Physically based shading is a technique used to light a scene more or less how it would be lit in real life. Obviously this can get very expensive because light is so complex, so in realtime rendering we use approximations for how light would behave. This is a set of a few equations that given certain properties of the surface, realistically calculate the lighting of an object. The three objects above are rendered with the same shader, even though they have fairly different surfaces. This can be done because the equations take in their different physical properties and calculates results that we would expect to see in the real world. Whats really cool is that these can be specified in a texture map, so we can have very different looking parts of an object without having to change shaders or add an additional draw call. The barrel in the picture above is done like this, the top is very reflective and metallic while the body below is matte. \n
 
         The benefits of using PBR is that artists (or me in this case) can use the same workflow across multiple engines and it will more or less look the same across all of them, not to mention it also looks very good when properly implemented. Work still needs to be done on my implementation (optimization, math tweaks, realtime reflections, etc.) but currently it works well enough that I can move onto other things.</content>
         <date>September 14, 2016</date>
-        
+
         <image>assets/image/spud_blog/physically_based_rendering.jpg</image>
-        <video>https://www.dropbox.com/s/mzch38c1hweawg0/UI%3ASound.mp4?dl=1</video>
-    
-    </entry>
-    
-    <entry>
-    
-        <title>Deferred Shading</title>
-        
-        <preview>This week I worked on implementing deferred shading. In computer graphics, when we render an object for every pixel that it takes up on the screen we run a mini-program called a shader. This is where real-time lighting is done, but when we want to have an object lit by multiple lights we run into a bit of a problem</preview>
-        
-        <content> This week I worked on implementing deferred shading. In computer graphics, when we render an object for every pixel that it takes up on the screen we run a mini-program called a shader. This is where real-time lighting is done, but when we want to have an object lit by multiple lights we run into a bit of a problem. For every light we want to add to the scene, we have to render the scene one more time, and that gets very expensive, very quickly. The solution is deferred shading. \n
 
-        In deferred shading we “defer” the shading until later. First we render the scene once and take in some information about it. In my case I render depth, albedo, normal, roughness and metallic to a texture; position can be reconstructed from the depth. Once the entire scene is rendered lighting can be done in another 2D pass. Lighting is now decoupled from scene complexity because the information needed from the scene is already in the offscreen buffer (called the G-Buffer). Because its decoupled from the scene geometry it would take the same computations to render a cube or a million triangle scene. This is really great because it enables rendering hundreds or thousands of lights (so long as its optimized), but it can also make transparent objects really difficult to render, so I’ll have to tackle that in the future. \n
-
-        I also implemented something called normal mapping into the engine. If we want to add complexity to an object’s surface, more polygons can be added, but that gets expensive if we want lots of tiny little details. That’s where normal mapping comes in. A normal is a vector that is perpendicular to a surface and we use it to compute lighting. A normal map is a texture that contains a bunch of normals. By using the normal map normals instead of the ones that a model has (which are only per-vertex) we can add a whole bunch of tiny little detail without increasing the number of polygons we have to render. If you look at the floor in the picture above, you’ll notice that there are a whole bunch of bumps and gaps in between the tiles. In fact the floor is completely flat, but the lighting makes it appear bumpy because of the normal map. \n
-
-        These are some great additions to the engine and really contribute to the quality of the scene. If you look closely at the picture above, something is a little off, and that’s because there are no shadows. In computer graphics we don’t magically get shadows, and so we have to simulate those too, which is probably my next step.</content>
-        <date>September 23, 2016</date>
-        
-        <image>assets/image/spud_blog/deferred_shading.jpg</image>
-    
-    </entry>
-    
-    <entry>
-    
-        <title>Shadow Mapping</title>
-        
-        <preview>I’ve spent the last couple of weeks working on shadows and tightening up parts of the engine. For shadows I’ve chosen to use shadow mapping because of their versatility and speed. Shadow mapping is a technique where the scene is rendered from the light’s perspective as a depth map</preview>
-        
-        <content>I’ve spent the last couple of weeks working on shadows and tightening up parts of the engine. For shadows I’ve chosen to use shadow mapping because of their versatility and speed. Shadow mapping is a technique where the scene is rendered from the light’s perspective as a depth map. Then when we light the scene from the normal camera we project every point on the screen into light space and compare it with the depth map rendered from the light’s perspective. If the value from the depth map is closer to the light’s camera than the one that was projected, the projected fragment is in shadow. \n
-
-        I’ve also chosen to use a shadow map atlas. This is just a 8192 x 8192 framebuffer divided into 512 x 512 chunks that are assigned to lights that cast shadows. That way just one texture needs to be bound to render all the lights in the scene. I’ve thrown around the idea of using 2 shadow maps for each light, one for dynamic geometry and one for static geometry. That way I can render a shadow map for dynamic objects once per frame and not have to render the entire scene, so hopefully it would be significantly faster. However it does require twice the memory for each light. Right now I am only using a few lights and no dynamic objects, so this isn’t an issue now but I might address it in the future. \n
-
-        Shadow mapping actually can suffer from a lot of artifacts, and there are a few that I still need to clean up. If you look at the image, you can see that the shadows are pixelated. This is because the shadow maps have a finite resolution. We can do a few things to clean up the shadow edges. We can render the shadow maps at a higher resolution, but that takes more memory and is more expensive than a lower resolution. We also can use something called percentage closer filtering (PCF) which samples a shadow map multiple times in different places and averages the values to smooth out the edges of the shadow. We can also use exponential shadow maps which actually let us filter the shadow maps so some kind of blur can be applied to the entire map to smooth out the shadows. This is the solution that I’m leaning towards because once a shadow is filtered it does not need to be filtered again until the shadow map is re-rendered whereas PCF has to be done every frame, for ever shadow casting, light regardless of if it was rendered that frame or not. </content>
-        <date>October 10, 2016</date>
-        
-        <image>assets/image/spud_blog/shadow_mapping.jpg</image>
-    
     </entry>
 
 </blog>

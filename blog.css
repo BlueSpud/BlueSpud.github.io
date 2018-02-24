@@ -20,11 +20,43 @@
 
 .logan_blurb p {
     
+    margin-left: auto;
+    margin-right: auto;
+    
     font-size: 13pt;
+    
     text-align: left;
     text-indent: 20pt;
     padding: 10pt;
     
+    width: 65%;
+    
+}
+
+.image_border {
+    
+    margin-top: 20pt;
+    
+    background: linear-gradient(to right, #2BD563 , #0082D5);
+    padding: 8pt;
+    
+}
+
+.image_width { width: 55%; }
+.image_feature { width: 65%; }
+
+@media
+only screen and (max-width: 760px) {
+
+	.logan_blurb p {
+
+		width: 85%;
+
+	}
+    
+    .image_width { width: 85%; }
+    .image_feature { width: 85%; }
+
 }
 
 .logan_blurb_header {
@@ -82,14 +114,5 @@
     
     color: white;
     background-color: #C9D3DF;
-    
-}
-
-.image_border {
-    
-    margin-top: 20pt;
-    
-    background: linear-gradient(to right, #2BD563 , #0082D5);
-    padding: 15pt;
     
 }

@@ -53,7 +53,7 @@ body {
     
 }
 
-.logan_header table {
+.logan_header_table {
     
     color: white;
     text-align: center;
@@ -122,7 +122,7 @@ only screen and (max-width: 760px) {
         
     }
     
-    .logan_header table, .logan_header thead, .logan_header tbody, .logan_header th, .logan_header td, .logan_header tr {
+    .logan_header_table, .logan_header_table thead, .logan_header_table tbody, .logan_header_table th, .logan_header_table td, .logan_header_table tr {
         
         display: block;
     }
