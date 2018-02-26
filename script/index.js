@@ -1,6 +1,6 @@
 function student() {
     
-   location.href = "stem.html?stem";
+   location.href = "routes.html";
     
 }
 
