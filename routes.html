@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale:1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Routes</title>
+</head>
+
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="blog.css">
+
+<body>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="script/header.js"></script>
+    <div id="topbar"></div>
+
+
+    <div class="topbar_spacing" style="background-color: #transparent;"></div>
+    <img src="assets/routes_banner_page.svg" width="100%" style="background-color:transparent; margin-top: -8pt;">
+
+    <div class="logan_blurb" style="width:100%; margin-top: -6pt;">
+
+            <div class="logan_blurb_header">   </div>
+
+        <p> Hyperloop is a new concept of transportation created by SpaceX. It involves a pod traveling through a vacuum-evacuated tube at speeds in excess of 600MPH. Because nothing like this has ever existed before, planning out the most optimal routes efficiently is currently a task performed by hand. Some companies have released route calculation tools for the concept, but are only approximations that use straight line distances and ignore terrain. At the beginning of the 2017 fall semester, myself and a few other students on the Paradigm Hyperloop team at Northeastern decided to write an algorithm to optimize routes much more efficiently. I am currently one of the two co-leads on the project and the one who has written most of the code.</p>
+
+                <p> Since the hyperloop travels so fast there are several constraints that are placed on the tracks that they travel inside of. SpaceX has set the limit on acceleration experienced by passengers of the hyperloop to be half of a g, or 4.9 m/s². Small turns in the track will require the pod inside to slow down to ensure that the passengers do not experience discomfort due to acceleration. Since sharp turns cannot be made, terrain obstacles will be encountered, and often the only choice is to tunnel through them. Therefore routes should also avoid paths that involve a significant amount of tunneling, as it is very expensive. In order to further reduce friction inside the tube, the hyperloop pod is expected to levitate. To avoid collision with the bottom of the tube, SpaceX has dictated that the grade of the track should not exceed 6%.</p>
+        
+                <p> Internally we also decided that our program should compute routes in a reasonable amount of time, such that it could perceivably be hosted on a website and the public could compute routes with it. In order to achieve this we developed a GPU-based implementation of the optimization algorithm CMA-ES using OpenCL. Our current implementation is hundreds of times faster than the original CPU bound implementation which was significantly less complex. We also wanted our algorithm to be able to use the real world as a model for it's calculations. As a result we utilize elevation collected by the United States Geological Survey to accurately model the real world when calculating routes. </p>
+
+                <p>The project source can be found on GitHub:</p>
+                <a href="https://github.com/ParadigmHyperloop/Routes">GitHub Repository</a>
+
+                <p>Here is a very preliminary video of the web flow with the algorithm in action:</p>
+                <center><video width="65%" class="image_border image_feature" controls><source src="assets/video/Routes.mp4"></video></center>
+
+
+    </div>
+
+    <div id="blog"></div>
+    <script src="script/blog.js"></script>
+
+</body>

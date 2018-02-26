@@ -1,12 +1,12 @@
 $(function() { 
     
     var index = 0;
-    var size = 6;
+    var size = 7;
     
     var step = 100 / size;
     
-    var colors = ["#D73131", "black", "#FA1159", "#FF162E", "#0068FF", "#2BB651"];
-    var pages = ["iteachyou.html", "spud.html?spud", "yip.html", "firestat.html", "donutfighter.html", "warriorsvoice.html"];
+    var colors = ["#D73131", "black", "#FA1159", "#FF162E", "#0068FF", "#2BB651", "#191919"];
+    var pages = ["iteachyou.html", "spud.html?spud", "yip.html", "firestat.html", "donutfighter.html", "warriorsvoice.html", "routes.html"];
     
     $("#carousel_content").css("width", size + "00%");
     

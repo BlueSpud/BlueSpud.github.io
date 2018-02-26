@@ -28,7 +28,7 @@ body {
     font-weight: 100;
     text-align: center;
     
-    box-shadow: 0 8px 6px -6px #222;
+    box-shadow: 0pt 0pt 30pt -7pt #222;
     
 }
 
@@ -109,7 +109,7 @@ body {
 .topbar_spacing {
     
     width: 100%;
-    height: 45pt;
+    height: 42pt;
     
 }
 
@@ -129,7 +129,7 @@ only screen and (max-width: 760px) {
     
     .topbar_spacing {
         
-        height: 175pt;
+        height: 210pt;
         
     }
         
