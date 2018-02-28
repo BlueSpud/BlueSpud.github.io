@@ -125,12 +125,12 @@ only screen and (max-width: 760px) {
     .logan_header_table, .logan_header_table thead, .logan_header_table tbody, .logan_header_table th, .logan_header_table td, .logan_header_table tr {
         
         display: block;
-        font-size: 12pt;
+        font-size: 13pt;
     }
     
     .topbar_spacing {
         
-        height: 167pt;
+        height: 190pt;
         
     }
         
