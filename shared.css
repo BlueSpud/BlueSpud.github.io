@@ -59,7 +59,7 @@ body {
     text-align: center;
     width: 100%;
     
-    font-size: 18pt;
+    font-size: 14pt;
 }
 
 .logan_header a {
@@ -125,11 +125,12 @@ only screen and (max-width: 760px) {
     .logan_header_table, .logan_header_table thead, .logan_header_table tbody, .logan_header_table th, .logan_header_table td, .logan_header_table tr {
         
         display: block;
+        font-size: 12pt;
     }
     
     .topbar_spacing {
         
-        height: 210pt;
+        height: 167pt;
         
     }
         

@@ -1,6 +1,5 @@
 .logan_blurb {
     
-    
     margin: auto;
     width: 98%;
     background-color: white;
@@ -23,7 +22,8 @@
     margin-left: auto;
     margin-right: auto;
     
-    font-size: 13pt;
+    font-weight: 400;
+    font-size: 12pt;
     
     text-align: left;
     text-indent: 20pt;
@@ -66,12 +66,12 @@ only screen and (max-width: 760px) {
     margin: auto;
     
     color: white;
-    font-size: 24pt;
+    font-size: 18pt;
     font-weight: 300;
     text-transform: uppercase;
     
-    padding-top: 20pt;
-    padding-bottom: 20pt;
+    padding-top: 16pt;
+    padding-bottom: 14pt;
     
     white-space: pre-wrap;
     

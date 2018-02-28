@@ -86,20 +86,23 @@ only screen and (max-width: 815pt) {
     
     .carousel_node {
         
-        padding-top: 70pt;
+        padding-top: 100pt;
         
     }
     
 }
 
-.tab_collection {
+.tab_container {
     
     position: absolute;
-    width: 35%;
     
-    left: 32.5%;
+    width: 100%;
     bottom: 20pt;
     
+    display: flex;
+    
+    align-items: center;
+    justify-content: center;
     
     z-index: 5;
     
@@ -115,8 +118,10 @@ only screen and (max-width: 815pt) {
 .tab {
     
     border-radius: 50%;
-    width: 15pt;
-    height: 15pt;
+    width: 17pt;
+    height: 17pt;
+    
+    margin: 5pt;
     
     background-color: white;
     opacity: 0.5;
