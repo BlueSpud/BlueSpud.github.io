@@ -73,7 +73,7 @@ To load an animated mesh into the engine, first I export a colada. That is then 
 The skinning didn't really require very much code change in the engine itself, other than a very slight modification to the model class and the addition of the new classes to support skinning. I also implemented a new shader system. In the new system, a vertex and fragment shader are written by a programmer like normal. Then when the engine loads them, it compiles several different versions of them by inserting code into them and then saves them to disk so when the engine is in a release configuration it will only have to compile each version if they are missing. Currently this system only compiles a normal shader for static meshes and a skinned shader for skinned meshes. </content>
         <date>February 9, 2017</date>
 
-        <video>assets/video/Animation.mp4</video>
+        <image>assets/image/spud_blog/animation.jpg</image>
 
     </entry>
 
