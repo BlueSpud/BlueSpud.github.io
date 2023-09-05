@@ -12,6 +12,6 @@ function programmer() {
 
 function gamer() {
     
-    location.href = "spud.html?spud";
+    location.href = "https://www.youtube.com/watch?v=p15K-Vb-ZWQ";
     
 }
